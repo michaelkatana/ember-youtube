@@ -64,27 +64,27 @@ export default Ember.Component.extend({
 	})),
 
 	// Did insert element hook
-	didInsertElement: function(){
+	loadAndCreatePlayer: Ember.on('didInsertElement', function() {
 		// check if YouTube API is already available
-		if(typeof YT === "undefined"){
+		if (typeof YT === "undefined"){
 			var _this = this;
 			// load the api script and call createPlayer when API is ready
-			Ember.$.getScript("https://www.youtube.com/iframe_api").then(function(){
+			Ember.$.getScript("https://www.youtube.com/iframe_api").then(function() {
 				window.onYouTubePlayerAPIReady = _this.createPlayer.bind(_this);
 			});
 		} else {
 			this.createPlayer();
 		}
-	},
+	}),
 
 	// clean up when element will be destroyed.
-	willDestroyElement: function(){
+	willDestroyElement: function() {
 		// clear the timer
 		this.stopTimer();
 
 		// destroy video player
 		var player = this.get('player');
-		if(player){
+		if (player) {
 			player.destroy();
 			this.set('player', null);
 		}
@@ -100,7 +100,6 @@ export default Ember.Component.extend({
 	createPlayer: function() {
 		let playerVars = this.get('playerVars');
 		let $iframe = this.$('#EmberYoutube-player');
-
 		let player = new YT.Player($iframe[0], {
 			width: 360,
 			height: 270,
@@ -198,16 +197,14 @@ export default Ember.Component.extend({
 		// }
 	},
 
-	timerChanged: function(){
-		// stop the previous timer
-		this.stopTimer();
-	}.observesBefore('timer'),
-
 	startTimer: function() {
 		let player = this.get('player');
 
-		this.set('currentTime', player.getCurrentTime());
-		this.set('duration', player.getDuration());
+		// set initial time
+		this.setProperties({
+			currentTime: player.getCurrentTime(),
+			duration: player.getDuration()
+		});
 
 		// every 60ms, update current time
 		let timer = window.setInterval(function() {
