@@ -6,6 +6,8 @@ var Router = Ember.Router.extend({
 });
 
 Router.map(function() {
+  this.route('another-video');
+  this.route('no-video');
 });
 
 export default Router;
