@@ -63,19 +63,23 @@ export default Ember.Component.extend({
 		this.playerVars.autoplay = this.get('autoplay') ? 1 : 0;
 	})),
 
-	// Did insert element hook
+	// Make certain the API is only called once
+	// and call createPlayer() once ready
 	loadAndCreatePlayer: on('didInsertElement', function() {
-    if (!window._youtubePlayerAPIReadyPromise) {
-      var deferred = Ember.RSVP.defer();
-      Ember.$.getScript("https://www.youtube.com/iframe_api").then(() => {
+
+		if (!window._youtubePlayerAPIReadyPromise) {
+			var deferred = Ember.RSVP.defer();
+
+			Ember.$.getScript('https://www.youtube.com/iframe_api').then(() => {
 				window.onYouTubePlayerAPIReady = deferred.resolve;
 			});
-      window._youtubePlayerAPIReadyPromise = deferred.promise;
-    }
 
-    window._youtubePlayerAPIReadyPromise.then(() => {
+			window._youtubePlayerAPIReadyPromise = deferred.promise;
+		}
+
+		window._youtubePlayerAPIReadyPromise.then(() => {
 			this.createPlayer();
-    });
+		});
 	}),
 
 	isMuted: computed({
