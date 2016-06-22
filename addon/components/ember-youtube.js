@@ -84,9 +84,11 @@ export default Ember.Component.extend({
 		const playerVars = this.get('playerVars');
 		const width = this.get('width');
 		const height = this.get('height');
+		const videoId = this.get('ytid');
 		let player = new YT.Player($iframe[0], {
 			width,
 			height,
+			videoId,
 			playerVars,
 			events: {
 				onReady: this.onPlayerReady.bind(this),
